@@ -1,24 +1,26 @@
-module MultiPortMemoryController(clk,rst_n,req_1,req_2,rw_1,rw_2,addr_1,addr_2,grant_1,grant_2,data_out_1,data_out_2,mem_addr,mem_rw,mem_data_in,mem_data_out);
+module MultiPortMemoryController(clk,rst_n,req_1,req_2,rw_1,rw_2,addr_1,addr_2,data_in_1,data_in_2,grant_1,grant_2,data_out_1,data_out_2,mem_addr,mem_rw,mem_data_in,mem_data_out);
 		input clk , rst_n;
 		input req_1,req_2; 
-		input rw_1,rw_2;
-		input [3:0]addr_1,addr_2;
-		input [7:0] data_in_1; 
-		input [7:0] data_in_2;
+		input  rw_1,rw_2;
+		input [3:0]  addr_1,addr_2;
+		input logic [7:0]  data_in_1; 
+		input logic [7:0]  data_in_2;
 		
-		output grant_1,grant_2;
-		output [7:0] data_out_1 ;
-		output [7:0] data_out_2 ;
-		output [3:0] mem_addr ; 
-		output [7:0] mem_data_in ; 
-		output [7:0] mem_data_out ;
+		output logic mem_rw;
+		output logic grant_1,grant_2;
+		output logic [7:0]  data_out_1 ;
+		output logic [7:0]  data_out_2 ;
+		output logic [3:0]  mem_addr ; 
+		output logic [7:0]  mem_data_in ; 
+		output logic [7:0]  mem_data_out ;
 		parameter MEM_SIZE =16;			
 		parameter TIMEOUT = 10 ;
 		parameter TIME_PROCESSING =2 ; 
-		typedef enum{IDLE,PROC1_READ,PROC1_WRITE,PROC2_READ,PROC2_WRITE,LOW_POWER} state; 
-		state current_state,next_state;
+		typedef enum { IDLE , PROC1_READ , PROC1_WRITE , PROC2_READ , PROC2_WRITE , LOW_POWER } state; 
+		state current_state ;
+		state   next_state ;
 		reg [3:0]timecntr;
-		reg [7:0]mem[MEM_SIZE-1:0];
+		reg [7:0]mem[MEM_SIZE-1:0]='{default: 'h0};
 
 		always @(posedge clk or negedge rst_n)begin
 			if(!rst_n)begin
@@ -83,7 +85,7 @@ module MultiPortMemoryController(clk,rst_n,req_1,req_2,rw_1,rw_2,addr_1,addr_2,g
 								next_state=LOW_POWER;
 								
 						end
-						else			next_state=IDL;
+						else			next_state=IDLE;
 											
 					end	
 				PROC1_READ:
