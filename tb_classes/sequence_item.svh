@@ -21,5 +21,44 @@ class sequence_item extends uvm_sequence_item;
     function new(string name="sequence_item");
         super.new(name);
     endfunction
+	function string convert2string();
+		string s; 
+		s=$sformatf("req_1=%0b  req_2=%0b  rw_1=%0b  rw_2=%0b  addr_1=%0h  addr_2=%0h  data_in_1=%0h  data_in_2=%0h 
+					mem_rw=%0b  grant_1=%0b  grant_2=%0b  data_out_1=%0h   data_out_2=%0h  mem_addr=%0h  mem_data_in=%0h  
+					mem_data_out=%0h",req_1,req_2,rw_1,rw_2,addr_1,addr_2,data_in_1,data_in_2,mem_rw,grant_1,grant_2,data_out_1,data_out_2,
+										mem_addr,mem_data_in,mem_data_out);
+		return s ; 
+	endfunction :convert2string
+	  
+	function bit do_compare(uvm_object rhs,uvm_comparer comparer );
+		sequence_item compared_item; 
+		bit same ;
+		if (rhs==null) begin
+			`uvm_fatal("RANDOM TRANSACTION","Tried to do comparison to a null pointer");
+		end
+		if (!$cast(compared_item,rhs)) begin
+			same=0;
+		end
+		else begin
+			same=super.do_compare(rhs,comparer)&&
+				(compared_item.req_1==req_1)&&
+				(compared_item.req_2==req_2)&&
+				(compared_item.rw_1==rw_1)&&
+				(compared_item.rw_2==rw_2)&&
+				(compared_item.addr_1==addr_1)&&
+				(compared_item.addr_2==addr_2)&&
+				(compared_item.data_in_1==data_in_1)&&
+				(compared_item.data_in_2==data_in_2)&&
+				(compared_item.mem_rw==mem_rw)&&
+				(compared_item.grant_1==grant_1)&&
+				(compared_item.grant_2==grant_2)&&
+				(compared_item.data_out_1==data_out_1)&&
+				(compared_item.data_out_2==data_out_2)&&
+				(compared_item.mem_addr==mem_addr)&&
+				(compared_item.mem_data_in==mem_data_in)&&
+				(compared_item.mem_data_out==mem_data_out);
+		end
+		return same;
+	endfunction:do_compare
 
 endclass
