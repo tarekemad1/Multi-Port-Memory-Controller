@@ -5,10 +5,12 @@ class Cpu2ReadSeq extends base_sequence;
         super.new(name);
     endfunction
     task body();
+    repeat(5) begin 
         item = sequence_item::type_id::create("item");
         start_item(item);
-            Randomization: assert (item.randomize() with{req_2==ACTIVE;rw_2==DEACTIVE;})
+            Randomization: assert (item.randomize() with{req_2==ACTIVE;req_1==DEACTIVE;rw_2==DEACTIVE;})
                 else `uvm_fatal("CPU2_READ_SEQ","Assertion Randomization failed!");
         finish_item(item);
+    end 
     endtask
 endclass
