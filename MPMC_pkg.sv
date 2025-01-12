@@ -3,10 +3,12 @@ package MPMC_pkg;
     `include "uvm_macros.svh"
     `include "sequence_item.svh"
     `include "base_sequence.svh"
+    `include "IdlSequence.svh"
     `include "Cpu1WriteSequence.svh"    
     `include "Cpu1ReadSequence.svh"
     `include "Cpu2WriteSequence.svh"    
     `include "Cpu2ReadSequence.svh"
+    `include "Cpu1Cpu2ReadSequence.svh"
     `include "sequencer.svh"
     `include "driver.svh"    
     `include "monitor.svh"   
@@ -18,4 +20,5 @@ package MPMC_pkg;
     `include "cpu1_test.svh" 
     `include "cpu2_test.svh"
     `include "cpu1_cpu2_test.svh"
+    `include "full_test.svh"
 endpackage :MPMC_pkg
