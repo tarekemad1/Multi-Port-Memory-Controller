@@ -6,7 +6,7 @@ module top;
     logic rst_n , clk ; 
 
     IF vif (clk , rst_n );
-    MPMC   dut(clk,rst_n, vif.req_1 , vif.req_2 , vif.rw_1, vif.rw_2 , 
+    MultiPortMemoryController   dut(clk,rst_n, vif.req_1 , vif.req_2 , vif.rw_1, vif.rw_2 , 
                     vif.addr_1 , vif.addr_2,vif.data_in_1,vif.data_in_2,vif.grant_1,vif.grant_2
                     ,vif.data_out_1,vif.data_out_2,vif.mem_addr,vif.mem_rw,vif.mem_data_in,vif.mem_data_out);
 
