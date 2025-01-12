@@ -39,14 +39,14 @@ module MultiPortMemoryController(clk,rst_n,req_1,req_2,rw_1,rw_2,addr_1,addr_2,d
 		end
 		
 		always_comb begin 
-			grant_1      = 1'b0;
-			grant_2      = 1'b0;
-			data_out_1   ='h0;
-		 	data_out_2   ='h0;
-		 	mem_addr     ='h0;
-			mem_rw	     ='b0;
-		 	mem_data_in  ='h0;
-			mem_data_out ='h0;
+			grant_1      = 1'bx;
+			grant_2      = 1'bx;
+			data_out_1   ='hx;
+		 	data_out_2   ='hx;
+		 	mem_addr     ='hx;
+			mem_rw	     ='bx;
+		 	mem_data_in  ='hx;
+			mem_data_out ='hx;
 			next_state=current_state;
 			case(current_state)
 				IDLE: begin 
