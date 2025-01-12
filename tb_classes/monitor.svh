@@ -33,6 +33,14 @@ task run_phase(uvm_phase phase);
         if (vif.req_1 || vif.req_2) begin
             sequence_item  item;
             item = sequence_item::type_id::create("item");
+                	item.req_1       = vif.req_1;
+                    item.req_2       = vif.req_2;
+		            item.rw_1        = vif.rw_1 ; 
+                    item.rw_2        = vif.rw_2 ; 
+		            item.addr_1      = vif.addr_1 ;
+                    item.addr_2      = vif.addr_2 ;
+		            item.data_in_1   = vif.data_in_1;
+		            item.data_in_2   = vif.data_in_2 ; 
 		            item.grant_1     = vif.grant_1;
                     item.grant_2     = vif.grant_2;
             		item.mem_rw      = vif.mem_rw;

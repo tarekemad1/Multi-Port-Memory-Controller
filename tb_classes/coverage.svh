@@ -3,23 +3,18 @@ class cvarg extends uvm_subscriber#(sequence_item);
     sequence_item item;
     sequence_item queue[$];
     uvm_analysis_imp #(sequence_item,cvarg) cov_imp;
-    /*rand bit req_1,req_2; 
-		rand bit  rw_1,rw_2;
-		rand logic [3:0]  addr_1,addr_2;
-		rand logic [7:0]  data_in_1; 
-		rand logic [7:0]  data_in_2;*/
+
     covergroup CPU1;
         REQ1: coverpoint item.req_1 {
-            bins ACTIVE[]={1'b1};
-            bins DEACTIVE[]={1'b0};
+            bins ACTIVE={1'b1};
+            bins DEACTIVE={1'b0};
         }
         RW1: coverpoint item.rw_1 {
             bins RD_FOR_CPU1 ={1'b0};
             bins WR_FOR_CPU1 ={1'b1};
         }
         ADDR1: coverpoint item.addr_1 {
-            bins ADDRS_ALL_ZEROS={'h0};
-            bins ADDRS_ALL_ONES={'h1};   
+            bins ADDRS_ALL_ZEROS={'h0};  
             bins ADDRS = default;  
         }
     endgroup
@@ -33,8 +28,7 @@ class cvarg extends uvm_subscriber#(sequence_item);
             bins WR_FOR_CPU2 ={1'b1};
         }
         ADDR2: coverpoint item.addr_2{
-            bins ADDRS_ALL_ZEROS={'h0};
-            bins ADDRS_ALL_ONES={'h1};   
+            bins ADDRS_ALL_ZEROS={'h0}; 
             bins ADDRS = default;  
         }
     endgroup
