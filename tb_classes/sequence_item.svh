@@ -30,35 +30,47 @@ class sequence_item extends uvm_sequence_item;
 		return s ; 
 	endfunction :convert2string
 	  
-	function bit do_compare(uvm_object rhs,uvm_comparer comparer );
-		sequence_item compared_item; 
-		bit same ;
-		if (rhs==null) begin
-			`uvm_fatal("RANDOM TRANSACTION","Tried to do comparison to a null pointer");
-		end
-		if (!$cast(compared_item,rhs)) begin
-			same=0;
-		end
-		else begin
-			same=super.do_compare(rhs,comparer)&&
-				(compared_item.req_1==req_1)&&
-				(compared_item.req_2==req_2)&&
-				(compared_item.rw_1==rw_1)&&
-				(compared_item.rw_2==rw_2)&&
-				(compared_item.addr_1==addr_1)&&
-				(compared_item.addr_2==addr_2)&&
-				(compared_item.data_in_1==data_in_1)&&
-				(compared_item.data_in_2==data_in_2)&&
-				(compared_item.mem_rw==mem_rw)&&
-				(compared_item.grant_1==grant_1)&&
-				(compared_item.grant_2==grant_2)&&
-				(compared_item.data_out_1==data_out_1)&&
-				(compared_item.data_out_2==data_out_2)&&
-				(compared_item.mem_addr==mem_addr)&&
-				(compared_item.mem_data_in==mem_data_in)&&
-				(compared_item.mem_data_out==mem_data_out);
-		end
-		return same;
-	endfunction:do_compare
+function bit do_compare(uvm_object rhs, uvm_comparer comparer);
+    sequence_item compared_item;
+    bit same;
+
+    // Check for null pointer
+    if (rhs == null) begin
+        `uvm_fatal("RANDOM TRANSACTION", "Tried to do comparison to a null pointer");
+        return 0;
+    end
+
+    // Cast the rhs object to sequence_item
+    if (!$cast(compared_item, rhs)) begin
+        return 0; // Return false if casting fails
+    end
+
+    // Start with the superclass comparison
+    same = super.do_compare(rhs, comparer);
+
+    // Compare essential fields strictly
+    same &= (compared_item.req_1 == req_1) &&
+            (compared_item.req_2 == req_2) &&
+            (compared_item.rw_1 == rw_1) &&
+            (compared_item.rw_2 == rw_2) &&
+            (compared_item.addr_1 == addr_1) &&
+            (compared_item.addr_2 == addr_2) &&
+            (compared_item.data_in_1 == data_in_1) &&
+            (compared_item.data_in_2 == data_in_2) &&
+            (compared_item.mem_rw == mem_rw) &&
+            (compared_item.mem_addr == mem_addr);
+
+    // Handle fields that can be 'x'
+    same &= (!$isunknown(compared_item.data_out_1) ? (compared_item.data_out_1 == data_out_1) : 1);
+    same &= (!$isunknown(compared_item.data_out_2) ? (compared_item.data_out_2 == data_out_2) : 1);
+    same &= (!$isunknown(compared_item.mem_data_in) ? (compared_item.mem_data_in == mem_data_in) : 1);
+    same &= (!$isunknown(compared_item.mem_data_out) ? (compared_item.mem_data_out == mem_data_out) : 1);
+    same &= (!$isunknown(compared_item.grant_2) ? (compared_item.grant_2 == grant_2) : 1);
+
+    return same;
+endfunction: do_compare
+
+
+
 
 endclass
