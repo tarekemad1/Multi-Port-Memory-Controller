@@ -9,6 +9,7 @@ package MPMC_pkg;
     `include "Cpu2WriteSequence.svh"    
     `include "Cpu2ReadSequence.svh"
     `include "Cpu1Cpu2ReadSequence.svh"
+    `include "ResetSequence.svh"
     `include "sequencer.svh"
     `include "driver.svh"    
     `include "monitor.svh"   
@@ -20,5 +21,7 @@ package MPMC_pkg;
     `include "cpu1_test.svh" 
     `include "cpu2_test.svh"
     `include "cpu1_cpu2_test.svh"
+    `include "IdlTest.svh"
     `include "full_test.svh"
+    `include "reset_test.svh"
 endpackage :MPMC_pkg
