@@ -1,4 +1,5 @@
-interface IF (input logic clk, rst_n);
+interface IF (input logic clk);
+		logic rst_n;
 		logic req_1,req_2; 
 		logic rw_1,rw_2;
 		logic [3:0]  addr_1,addr_2;
