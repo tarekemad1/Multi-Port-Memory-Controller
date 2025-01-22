@@ -7,7 +7,8 @@ class IdlSequence extends base_sequence;
         sequence_item iitem ;
         item=sequence_item::type_id::create("item");
         start_item(item);
-            #50;
+            Randomization: assert (item.randomize() with {req_1==1'b0;req_2==1'b0;})
+                else $error("Assertion Randomization failed!");
         finish_item(item);
     endtask
 endclass
