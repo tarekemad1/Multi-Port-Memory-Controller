@@ -38,7 +38,8 @@ module MultiPortMemoryController(clk,rst_n,req_1,req_2,rw_1,rw_2,addr_1,addr_2,d
 					
 		end
 		
-		always_comb begin 
+		always_comb
+		begin 
 			grant_1      = 1'bx;
 			grant_2      = 1'bx;
 			data_out_1   ='hx;
@@ -48,74 +49,70 @@ module MultiPortMemoryController(clk,rst_n,req_1,req_2,rw_1,rw_2,addr_1,addr_2,d
 		 	mem_data_in  ='hx;
 			mem_data_out ='hx;
 			next_state=current_state;
-			case(current_state)
-				IDLE: begin 
-					if(req_1)begin 
-						grant_1  =1'b1; 
-						mem_rw   =rw_1; 
-						mem_addr =addr_1; 
-						if(!rw_1)
-							begin 
-							mem_data_out =mem[addr_1];
-							data_out_1   =mem[addr_1];
-							next_state=PROC1_READ;
-							end
-						 else 
-							begin 
-							mem_data_in=data_in_1; 
-							next_state=PROC1_WRITE;
-							end
-					end 
-					else if(req_2)begin 
-						grant_2  =1'b1; 
-						mem_rw   =rw_2; 
-						mem_addr =addr_2; 
-						if(!rw_2)begin 
-							data_out_2=mem[addr_2];
-							mem_data_out =mem[addr_2];
-							next_state=PROC2_READ;
-							end 
-						 else begin 
-							mem_data_in = data_in_2; 
-							next_state=PROC2_WRITE;
-							end 
-					end
-					else 
-						if(timecntr==TIMEOUT) begin
-								next_state=LOW_POWER;
-								
-						end
-						else			next_state=IDLE;
-											
-					end	
-				PROC1_READ:
-						if(timecntr==TIME_PROCESSING)	begin 
-							next_state=IDLE;
-					
+
+			if(!rst_n)
+			begin 
+				grant_1      = 1'bx;
+				grant_2      = 1'bx;
+				data_out_1   ='hx;
+				data_out_2   ='hx;
+				mem_addr     ='hx;
+				mem_rw	     ='bx;
+				mem_data_in  ='hx;
+				mem_data_out ='hx;
+			end
+			else
+			begin
+				case(current_state)
+					IDLE: begin 
+						if(req_1)begin 
+							grant_1  =1'b1; 
+							mem_rw   =rw_1; 
+							mem_addr =addr_1; 
+							if(!mem_rw)
+								begin :CPU1_Read
+								mem_data_out =mem[mem_addr];
+								data_out_1   =mem[mem_addr];
+								next_state=PROC1_READ;
+								end
+							else 
+								begin :CPU1_Write
+								mem_data_in=data_in_1;
+								mem[mem_addr] <=data_in_1 ; 
+								next_state=PROC1_WRITE;
+								end
 						end 
-				PROC1_WRITE:
-						if(timecntr==TIME_PROCESSING)begin 
-							mem[addr_1] <=data_in_1 ;
-							next_state=IDLE;
-					
-						end 
-				PROC2_READ:
-						if(timecntr==TIME_PROCESSING)begin 
-							next_state=IDLE;
-					
+						else if(req_2)begin 
+							grant_2  =1'b1; 
+							mem_rw   =rw_2; 
+							mem_addr =addr_2; 
+							if(!mem_rw)begin :CPU2_Read
+								data_out_2=mem[mem_addr];
+								mem_data_out =mem[mem_addr];
+								next_state=PROC2_READ;
+								end 
+							else begin :CPU2_Write
+								mem_data_in = data_in_2; 			
+								mem[mem_addr] <= data_in_2;	
+								next_state=PROC2_WRITE;
+								end 
 						end
-				PROC2_WRITE:	if(timecntr==TIME_PROCESSING)begin 	
-							mem[addr_2] <= data_in_2;	
-							next_state=IDLE;
-							
-						end
-				LOW_POWER:
-						if(req_1 || req_2)
-							next_state=IDLE;
-				default:
-						next_state=IDLE;
-			endcase
+						else 
+							if(timecntr==TIMEOUT) begin
+									next_state=LOW_POWER;
+									
+							end
+							else			next_state=IDLE;
+												
+						end	
+					PROC1_READ: next_state=IDLE;
+					PROC1_WRITE:next_state=IDLE;
+					PROC2_READ:next_state=IDLE;
+					PROC2_WRITE:next_state=IDLE;
+					LOW_POWER:
+							if(req_1 || req_2)
+								next_state=IDLE;
+				endcase				
+			end 
 		end 
-
-
 endmodule
