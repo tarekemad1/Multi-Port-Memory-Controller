@@ -1,5 +1,5 @@
 QuestaSim-64 vcover 10.6c Coverage Utility 2017.07 Jul 26 2017
-Start time: 16:12:53 on Jan 12,2025
+Start time: 00:00:18 on Jan 23,2025
 vcover report logs/full_test.ucdb -details 
 Coverage Report by file with details
 
@@ -9,7 +9,7 @@ Coverage Report by file with details
 Statement Coverage:
     Enabled Coverage            Active      Hits    Misses % Covered
     ----------------            ------      ----    ------ ---------
-    Stmts                           42        39         3      92.8
+    Stmts                           49        47         2      95.9
 
 ================================Statement Details================================
 
@@ -39,183 +39,162 @@ Statement Coverage for file rtl/MultiPortMemoryController.sv --
     22                                               		reg [3:0]timecntr;
     23                                               		reg [7:0]mem[MEM_SIZE-1:0]='{default: 'h0};
     24                                               
-    25              1                        128     		always @(posedge clk or negedge rst_n)begin
+    25              1                         84     		always @(posedge clk or negedge rst_n)begin
     26                                               			if(!rst_n)begin
-    27              1                          3     				current_state<=IDLE;
-    28              1                          3     				timecntr <='h0;
+    27              1                          4     				current_state<=IDLE;
+    28              1                          4     				timecntr <='h0;
     29                                               				end
     30                                               			else begin 
-    31              1                        125     				current_state<=next_state; 
+    31              1                         80     				current_state<=next_state; 
     32                                               				if(current_state==IDLE || current_state ==LOW_POWER)begin 
-    33              1                         62     					timecntr<=0;
+    33              1                         59     					timecntr<=0;
     34                                               				end
     35                                               				else 
-    36              1                         63     						timecntr <= timecntr+1;
+    36              1                         21     						timecntr <= timecntr+1;
     37                                               			end 
     38                                               					
     39                                               		end
     40                                               		
-    41              1                        120     		always_comb begin 
-    42              1                        120     			grant_1      = 1'bx;
-    43              1                        120     			grant_2      = 1'bx;
-    44              1                        120     			data_out_1   ='hx;
-    45              1                        120     		 	data_out_2   ='hx;
-    46              1                        120     		 	mem_addr     ='hx;
-    47              1                        120     			mem_rw	     ='bx;
-    48              1                        120     		 	mem_data_in  ='hx;
-    49              1                        120     			mem_data_out ='hx;
-    50              1                        120     			next_state=current_state;
-    51                                               			case(current_state)
-    52                                               				IDLE: begin 
-    53                                               					if(req_1)begin 
-    54              1                          9     						grant_1  =1'b1; 
-    55              1                          9     						mem_rw   =rw_1; 
-    56              1                          9     						mem_addr =addr_1; 
-    57                                               						if(!rw_1)
-    58                                               							begin 
-    59              1                          3     							mem_data_out =mem[addr_1];
-    60              1                          3     							data_out_1   =mem[addr_1];
-    61              1                          3     							next_state=PROC1_READ;
-    62                                               							end
-    63                                               						 else 
-    64                                               							begin 
-    65              1                          6     							mem_data_in=data_in_1; 
-    66              1                          6     							next_state=PROC1_WRITE;
-    67                                               							end
-    68                                               					end 
-    69                                               					else if(req_2)begin 
-    70              1                         13     						grant_2  =1'b1; 
-    71              1                         13     						mem_rw   =rw_2; 
-    72              1                         13     						mem_addr =addr_2; 
-    73                                               						if(!rw_2)begin 
-    74              1                          3     							data_out_2=mem[addr_2];
-    75              1                          3     							mem_data_out =mem[addr_2];
-    76              1                          3     							next_state=PROC2_READ;
-    77                                               							end 
-    78                                               						 else begin 
-    79              1                         10     							mem_data_in = data_in_2; 
-    80              1                         10     							next_state=PROC2_WRITE;
-    81                                               							end 
-    82                                               					end
-    83                                               					else 
-    84                                               						if(timecntr==TIMEOUT) begin
-    85              1                    ***0***     								next_state=LOW_POWER;
-    86                                               								
-    87                                               						end
-    88              1                         35     						else			next_state=IDLE;
-    89                                               											
-    90                                               					end	
-    91                                               				PROC1_READ:
-    92                                               						if(timecntr==TIME_PROCESSING)	begin 
-    93              1                          3     							next_state=IDLE;
-    94                                               					
-    95                                               						end 
-    96                                               				PROC1_WRITE:
-    97                                               						if(timecntr==TIME_PROCESSING)begin 
-    98              1                          5     							mem[addr_1] <=data_in_1 ;
-    99              1                          5     							next_state=IDLE;
-    100                                              					
-    101                                              						end 
-    102                                              				PROC2_READ:
-    103                                              						if(timecntr==TIME_PROCESSING)begin 
-    104             1                          3     							next_state=IDLE;
-    105                                              					
-    106                                              						end
-    107                                              				PROC2_WRITE:	if(timecntr==TIME_PROCESSING)begin 	
-    108             1                         10     							mem[addr_2] <= data_in_2;	
-    109             1                         10     							next_state=IDLE;
-    110                                              							
-    111                                              						end
-    112                                              				LOW_POWER:
-    113                                              						if(req_1 || req_2)
-    114             1                    ***0***     							next_state=IDLE;
-    115                                              				default:
-    116             1                    ***0***     						next_state=IDLE;
-    117                                              			endcase
-    118                                              		end 
-    119                                              
-    120                                              
-    121                                              endmodule
+    41              1                         71     		always_comb
+    42                                               		begin 
+    43              1                         71     			grant_1      = 1'bx;
+    44              1                         71     			grant_2      = 1'bx;
+    45              1                         71     			data_out_1   ='hx;
+    46              1                         71     		 	data_out_2   ='hx;
+    47              1                         71     		 	mem_addr     ='hx;
+    48              1                         71     			mem_rw	     ='bx;
+    49              1                         71     		 	mem_data_in  ='hx;
+    50              1                         71     			mem_data_out ='hx;
+    51              1                         71     			next_state=current_state;
+    52                                               
+    53                                               			if(!rst_n)
+    54                                               			begin 
+    55              1                          3     				grant_1      = 1'bx;
+    56              1                          3     				grant_2      = 1'bx;
+    57              1                          3     				data_out_1   ='hx;
+    58              1                          3     				data_out_2   ='hx;
+    59              1                          3     				mem_addr     ='hx;
+    60              1                          3     				mem_rw	     ='bx;
+    61              1                          3     				mem_data_in  ='hx;
+    62              1                          3     				mem_data_out ='hx;
+    63                                               			end
+    64                                               			else
+    65                                               			begin
+    66                                               				case(current_state)
+    67                                               					IDLE: begin 
+    68                                               						if(req_1)begin 
+    69              1                         11     							grant_1  =1'b1; 
+    70              1                         11     							mem_rw   =rw_1; 
+    71              1                         11     							mem_addr =addr_1; 
+    72                                               							if(!mem_rw)
+    73                                               								begin :CPU1_Read
+    74              1                          5     								mem_data_out =mem[mem_addr];
+    75              1                          5     								data_out_1   =mem[mem_addr];
+    76              1                          5     								next_state=PROC1_READ;
+    77                                               								end
+    78                                               							else 
+    79                                               								begin :CPU1_Write
+    80              1                          6     								mem_data_in=data_in_1;
+    81              1                          6     								mem[mem_addr] <=data_in_1 ; 
+    82              1                          6     								next_state=PROC1_WRITE;
+    83                                               								end
+    84                                               						end 
+    85                                               						else if(req_2)begin 
+    86              1                         10     							grant_2  =1'b1; 
+    87              1                         10     							mem_rw   =rw_2; 
+    88              1                         10     							mem_addr =addr_2; 
+    89                                               							if(!mem_rw)begin :CPU2_Read
+    90              1                          5     								data_out_2=mem[mem_addr];
+    91              1                          5     								mem_data_out =mem[mem_addr];
+    92              1                          5     								next_state=PROC2_READ;
+    93                                               								end 
+    94                                               							else begin :CPU2_Write
+    95              1                          5     								mem_data_in = data_in_2; 			
+    96              1                          5     								mem[mem_addr] <= data_in_2;	
+    97              1                          5     								next_state=PROC2_WRITE;
+    98                                               								end 
+    99                                               						end
+    100                                              						else 
+    101                                              							if(timecntr==TIMEOUT) begin
+    102             1                    ***0***     									next_state=LOW_POWER;
+    103                                              									
+    104                                              							end
+    105             1                         26     							else			next_state=IDLE;
+    106                                              												
+    107                                              						end	
+    108             1                          5     					PROC1_READ: next_state=IDLE;
+    109             1                          6     					PROC1_WRITE:next_state=IDLE;
+    110             1                          5     					PROC2_READ:next_state=IDLE;
+    111             1                          5     					PROC2_WRITE:next_state=IDLE;
+    112                                              					LOW_POWER:
+    113                                              							if(req_1 || req_2)
+    114             1                    ***0***     								next_state=IDLE;
+    115                                              				endcase				
+    116                                              			end 
+    117                                              		end 
+    118                                              endmodule
 
 Branch Coverage:
     Enabled Coverage            Active      Hits    Misses % Covered
     ----------------            ------      ----    ------ ---------
-    Branches                        29        24         5      82.7
+    Branches                        23        18         5      78.2
 
 ================================Branch Details================================
 
 Branch Coverage for file rtl/MultiPortMemoryController.sv --
 
 ------------------------------------IF Branch------------------------------------
-    26                                       128     Count coming in to IF
-    26              1                          3     			if(!rst_n)begin
-    30              1                        125     			else begin 
+    26                                        84     Count coming in to IF
+    26              1                          4     			if(!rst_n)begin
+    30              1                         80     			else begin 
 Branch totals: 2 hits of 2 branches = 100.0%
 
 ------------------------------------IF Branch------------------------------------
-    32                                       125     Count coming in to IF
-    32              1                         62     				if(current_state==IDLE || current_state ==LOW_POWER)begin 
-    35              1                         63     				else 
+    32                                        80     Count coming in to IF
+    32              1                         59     				if(current_state==IDLE || current_state ==LOW_POWER)begin 
+    35              1                         21     				else 
+Branch totals: 2 hits of 2 branches = 100.0%
+
+------------------------------------IF Branch------------------------------------
+    53                                        71     Count coming in to IF
+    53              1                          3     			if(!rst_n)
+    64              1                         68     			else
 Branch totals: 2 hits of 2 branches = 100.0%
 
 ------------------------------------CASE Branch------------------------------------
-    51                                       120     Count coming in to CASE
-    52              1                         57     				IDLE: begin 
-    91              1                          9     				PROC1_READ:
-    96              1                         15     				PROC1_WRITE:
-    102             1                          9     				PROC2_READ:
-    107             1                         30     				PROC2_WRITE:	if(timecntr==TIME_PROCESSING)begin 	
-    112             1                    ***0***     				LOW_POWER:
-    115             1                    ***0***     				default:
+    66                                        68     Count coming in to CASE
+    67              1                         47     					IDLE: begin 
+    108             1                          5     					PROC1_READ: next_state=IDLE;
+    109             1                          6     					PROC1_WRITE:next_state=IDLE;
+    110             1                          5     					PROC2_READ:next_state=IDLE;
+    111             1                          5     					PROC2_WRITE:next_state=IDLE;
+    112             1                    ***0***     					LOW_POWER:
+                                         ***0***     All False Count
 Branch totals: 5 hits of 7 branches = 71.4%
 
 ------------------------------------IF Branch------------------------------------
-    53                                        57     Count coming in to IF
-    53              1                          9     					if(req_1)begin 
-    69              1                         13     					else if(req_2)begin 
-    84              1                    ***0***     						if(timecntr==TIMEOUT) begin
-    88              1                         35     						else			next_state=IDLE;
+    68                                        47     Count coming in to IF
+    68              1                         11     						if(req_1)begin 
+    85              1                         10     						else if(req_2)begin 
+    101             1                    ***0***     							if(timecntr==TIMEOUT) begin
+    105             1                         26     							else			next_state=IDLE;
 Branch totals: 3 hits of 4 branches = 75.0%
 
 ------------------------------------IF Branch------------------------------------
-    57                                         9     Count coming in to IF
-    57              1                          3     						if(!rw_1)
-    63              1                          6     						 else 
+    72                                        11     Count coming in to IF
+    72              1                          5     							if(!mem_rw)
+    78              1                          6     							else 
 Branch totals: 2 hits of 2 branches = 100.0%
 
 ------------------------------------IF Branch------------------------------------
-    73                                        13     Count coming in to IF
-    73              1                          3     						if(!rw_2)begin 
-    78              1                         10     						 else begin 
-Branch totals: 2 hits of 2 branches = 100.0%
-
-------------------------------------IF Branch------------------------------------
-    92                                         9     Count coming in to IF
-    92              1                          3     						if(timecntr==TIME_PROCESSING)	begin 
-                                               6     All False Count
-Branch totals: 2 hits of 2 branches = 100.0%
-
-------------------------------------IF Branch------------------------------------
-    97                                        15     Count coming in to IF
-    97              1                          5     						if(timecntr==TIME_PROCESSING)begin 
-                                              10     All False Count
-Branch totals: 2 hits of 2 branches = 100.0%
-
-------------------------------------IF Branch------------------------------------
-    103                                        9     Count coming in to IF
-    103             1                          3     						if(timecntr==TIME_PROCESSING)begin 
-                                               6     All False Count
-Branch totals: 2 hits of 2 branches = 100.0%
-
-------------------------------------IF Branch------------------------------------
-    107                                       30     Count coming in to IF
-    107             2                         10     				PROC2_WRITE:	if(timecntr==TIME_PROCESSING)begin 	
-                                              20     All False Count
+    89                                        10     Count coming in to IF
+    89              1                          5     							if(!mem_rw)begin :CPU2_Read
+    94              1                          5     							else begin :CPU2_Write
 Branch totals: 2 hits of 2 branches = 100.0%
 
 ------------------------------------IF Branch------------------------------------
     113                                  ***0***     Count coming in to IF
-    113             1                    ***0***     						if(req_1 || req_2)
+    113             1                    ***0***     							if(req_1 || req_2)
                                          ***0***     All False Count
 Branch totals: 0 hits of 2 branches = 0.0%
 
@@ -284,33 +263,33 @@ FSM_ID: current_state
     ---------------------
 Line          State Name               Value
 ----          ----------               -----
-  52                IDLE                   0
+  67                IDLE                   0
  112           LOW_POWER                   5
- 107         PROC2_WRITE                   4
- 102          PROC2_READ                   3
-  96         PROC1_WRITE                   2
-  91          PROC1_READ                   1
+ 111         PROC2_WRITE                   4
+ 110          PROC2_READ                   3
+ 109         PROC1_WRITE                   2
+ 108          PROC1_READ                   1
     Covered States :
     ----------------
                    State           Hit_count
                    -----           ---------
-                    IDLE                  65
-             PROC2_WRITE                  30
-              PROC2_READ                   9
-             PROC1_WRITE                  15
-              PROC1_READ                   9
+                    IDLE                  62
+             PROC2_WRITE                   5
+              PROC2_READ                   5
+             PROC1_WRITE                   6
+              PROC1_READ                   5
     Covered Transitions :
     ---------------------
 Line            Trans_ID           Hit_count          Transition          
 ----            --------           ---------          ----------          
-  80                   1                  10          IDLE -> PROC2_WRITE 
-  76                   2                   3          IDLE -> PROC2_READ  
-  66                   3                   5          IDLE -> PROC1_WRITE 
-  61                   4                   3          IDLE -> PROC1_READ  
- 109                   6                  10          PROC2_WRITE -> IDLE 
- 104                   7                   3          PROC2_READ -> IDLE  
-  99                   8                   5          PROC1_WRITE -> IDLE 
-  93                   9                   3          PROC1_READ -> IDLE  
+  97                   1                   5          IDLE -> PROC2_WRITE 
+  92                   2                   5          IDLE -> PROC2_READ  
+  82                   3                   6          IDLE -> PROC1_WRITE 
+  76                   4                   5          IDLE -> PROC1_READ  
+ 111                   6                   5          PROC2_WRITE -> IDLE 
+ 110                   7                   5          PROC2_READ -> IDLE  
+ 109                   8                   6          PROC1_WRITE -> IDLE 
+ 108                   9                   5          PROC1_READ -> IDLE  
     Uncovered States :
     ------------------
                    State
@@ -320,7 +299,7 @@ Line            Trans_ID           Hit_count          Transition
     -----------------------
 Line            Trans_ID          Transition          
 ----            --------          ----------          
-  85                   0          IDLE -> LOW_POWER   
+ 102                   0          IDLE -> LOW_POWER   
  114                   5          LOW_POWER -> IDLE   
 
 
@@ -342,20 +321,20 @@ Covergroup                                             Metric       Goal    Stat
         covered/total bins:                                 2          2                      
         missing/total bins:                                 0          2                      
         % Hit:                                         100.0%        100                      
-        bin ACTIVE                                         15          1    Covered              
-        bin DEACTIVE                                       15          1    Covered              
+        bin ACTIVE                                         12          1    Covered              
+        bin DEACTIVE                                       10          1    Covered              
     Coverpoint CPU1::RW1                               100.0%        100    Covered              
         covered/total bins:                                 2          2                      
         missing/total bins:                                 0          2                      
         % Hit:                                         100.0%        100                      
-        bin RD_FOR_CPU1                                    11          1    Covered              
-        bin WR_FOR_CPU1                                    19          1    Covered              
+        bin RD_FOR_CPU1                                     9          1    Covered              
+        bin WR_FOR_CPU1                                    13          1    Covered              
     Coverpoint CPU1::ADDR1                             100.0%        100    Covered              
         covered/total bins:                                 1          1                      
         missing/total bins:                                 0          1                      
         % Hit:                                         100.0%        100                      
-        bin ADDRS_ALL_ZEROS                                 4          1    Covered              
-        default bin ADDRS                                  26               Occurred             
+        bin ADDRS_ALL_ZEROS                                 2          1    Covered              
+        default bin ADDRS                                  20               Occurred             
  CLASS cvarg
  TYPE /MPMC_pkg/cvarg/CPU2                             100.0%        100    Covered              
     covered/total bins:                                     5          5                      
@@ -365,20 +344,20 @@ Covergroup                                             Metric       Goal    Stat
         covered/total bins:                                 2          2                      
         missing/total bins:                                 0          2                      
         % Hit:                                         100.0%        100                      
-        bin ACTIVE                                         15          1    Covered              
-        bin DEACTIVE                                       15          1    Covered              
+        bin ACTIVE                                         12          1    Covered              
+        bin DEACTIVE                                       10          1    Covered              
     Coverpoint CPU2::RW2                               100.0%        100    Covered              
         covered/total bins:                                 2          2                      
         missing/total bins:                                 0          2                      
         % Hit:                                         100.0%        100                      
-        bin RD_FOR_CPU2                                    11          1    Covered              
-        bin WR_FOR_CPU2                                    19          1    Covered              
+        bin RD_FOR_CPU2                                    10          1    Covered              
+        bin WR_FOR_CPU2                                    12          1    Covered              
     Coverpoint CPU2::ADDR2                             100.0%        100    Covered              
         covered/total bins:                                 1          1                      
         missing/total bins:                                 0          1                      
         % Hit:                                         100.0%        100                      
         bin ADDRS_ALL_ZEROS                                 1          1    Covered              
-        default bin ADDRS                                  29               Occurred             
+        default bin ADDRS                                  21               Occurred             
  CLASS cvarg
 
 TOTAL COVERGROUP COVERAGE: 100.0%  COVERGROUP TYPES: 2
@@ -393,13 +372,15 @@ Name                 File(Line)           Failure Pass
 /MPMC_pkg/Cpu1ReadSeq/body/#ublk#85550135#9/immed__12
                      ./tb_classes/sequences/Cpu1ReadSequence.svh(12)       0     1
 /MPMC_pkg/Cpu2WriteSeq/body/Randomization
-                     ./tb_classes/sequences/Cpu2WriteSequence.svh(11)       0     1
+                     ./tb_classes/sequences/Cpu2WriteSequence.svh(10)       0     1
 /MPMC_pkg/Cpu2ReadSeq/body/Randomization
                      ./tb_classes/sequences/Cpu2ReadSequence.svh(11)       0     1
 /MPMC_pkg/Cpu1Cpu2ReadSeq/body/Randomization
-                     ./tb_classes/sequences/Cpu1Cpu2ReadSequence.svh(8)       0     1
+                     ./tb_classes/sequences/Cpu1Cpu2ReadSequence.svh(10)       0     1
+/MPMC_pkg/ResetSequence/body/Randomization
+                     ./tb_classes/sequences/ResetSequence.svh(9)       0     1
 
-Total Coverage By File (code coverage only, filtered view): 70.5%
+Total Coverage By File (code coverage only, filtered view): 70.2%
 
-End time: 16:12:53 on Jan 12,2025, Elapsed time: 0:00:00
+End time: 00:00:18 on Jan 23,2025, Elapsed time: 0:00:00
 Errors: 0, Warnings: 0
