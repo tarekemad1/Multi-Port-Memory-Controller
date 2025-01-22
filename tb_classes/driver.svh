@@ -38,6 +38,7 @@ class driver extends uvm_driver #(sequence_item);
     task drive_item (sequence_item item);
         @(posedge vif.clk);
         //#10;
+            vif.rst_n <=item.rst_n;
             vif.req_1 <=item.req_1;
             vif.req_2  <= item.req_2;
 		    vif.rw_1   <= item.rw_1;
@@ -46,8 +47,8 @@ class driver extends uvm_driver #(sequence_item);
             vif.addr_2 <= item.addr_2;
 		    vif.data_in_1 <=item.data_in_1;
 		    vif.data_in_2 <= item.data_in_2;
-         `uvm_info("DRIVER", $sformatf("Driver Received: req1=%0d,req2=%0d , rw_1=%0h,rw_2=%0b ,addr_1=%0h
-                                        addr_2=%0h,data_in_1=%0h,data_in_2=%0h",
+         `uvm_info("DRIVER", $sformatf("Driver Received: srt_n=%0b req1=%0d,req2=%0d , rw_1=%0h,rw_2=%0b ,addr_1=%0h
+                                        addr_2=%0h,data_in_1=%0h,data_in_2=%0h",item.rst_n,
                                         item.req_1,item.req_2 ,item.rw_1,item.rw_2,item.addr_1
                                             ,item.addr_2,item.data_in_1,item.data_in_2), UVM_LOW);
             @(posedge vif.clk); // Wait for the next clock cycle

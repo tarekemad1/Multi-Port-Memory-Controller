@@ -45,6 +45,7 @@ class scoreboard extends uvm_subscriber#(sequence_item);
         sequence_item predicted_item;
 
         predicted_item = sequence_item::type_id::create("predicted_item");
+        predicted_item.rst_n=txn.rst_n;
         predicted_item.req_1=txn.req_1;
         predicted_item.req_2=txn.req_2;
         predicted_item.rw_1 =txn.rw_1;
@@ -53,7 +54,15 @@ class scoreboard extends uvm_subscriber#(sequence_item);
         predicted_item.addr_2=txn.addr_2;
         predicted_item.data_in_1=txn.data_in_1;
         predicted_item.data_in_2=txn.data_in_2;
-        if (predicted_item.req_1) begin: CPU1
+        if (!predicted_item.rst_n) begin
+            predicted_item.mem_addr='hx; 
+            predicted_item.grant_1=1'bx;
+            predicted_item.grant_2=1'bx;
+            predicted_item.mem_addr='hx;
+            predicted_item.mem_data_in='hx;
+            predicted_item.mem_data_out='hx; 
+        end else begin
+            if (predicted_item.req_1) begin: CPU1
             predicted_item.grant_1 = 1'b1;
             predicted_item.grant_2 = 1'bx;
             if (txn.rw_1) begin: CP1_write
@@ -84,6 +93,7 @@ class scoreboard extends uvm_subscriber#(sequence_item);
                 predicted_item.mem_addr = predicted_item.addr_2;
                 predicted_item.mem_data_in = predicted_item.data_in_2;
                 predicted_item.mem_data_out = 'hx;
+                
             end: CPU2_write
             else begin
                 predicted_item.mem_rw = 1'b0;
@@ -97,21 +107,8 @@ class scoreboard extends uvm_subscriber#(sequence_item);
             `uvm_error("GOLDEN MODEL", "No valid request detected in the transaction")
             return null;
         end
+        end
+        
         return predicted_item;
     endfunction: golden_model
-
-    // Run phase for debugging transactions
-    /*task run_phase(uvm_phase phase);
-        phase.raise_objection(this);
-        forever begin
-            if (latest_transaction != null) begin
-                `uvm_info("SCOREBOARD DEBUG", $sformatf("Received transaction: %s", latest_transaction.convert2string()), UVM_HIGH)
-                latest_transaction = null; // Reset after debugging
-            end
-            // Small delay to prevent continuous busy-waiting
-            #1ns;
-        end
-        phase.drop_objection(this);
-    endtask*/
-
 endclass
